@@ -1,0 +1,5 @@
+@include('frontend.include.head')
+@include('frontend.include.header')
+@include('frontend.products.show_cart')
+@include('frontend.include.content')
+@include('frontend.include.footer')

@@ -1,0 +1,78 @@
+<?php
+namespace App\Http\Controllers\frontend;
+use App\Http\Controllers\Controller;
+
+use App\Http\Models\ProductsModels;
+
+use Cart;
+
+class CartsController extends Controller {
+
+	public function add_cart() {
+
+		$c = $_POST['count'];
+
+		$pro_id = $_POST['pro_id'];
+		$size   = 'XS';
+		$qty    = 1;
+		if (isset($_POST['size'])) {
+			$size = $_POST['size'];
+		}
+		if (isset($_POST['qty'])) {
+			$qty = $_POST['qty'];
+		}
+		$product  = ProductsModels::get_product_by_id($pro_id);
+		$cartItem = Cart::add(array('id' => $pro_id, 'name' => $size, 'qty' => $qty, 'price' => $product->price, 'options' => ['size' => $size]));
+		$count    = Cart::content()->count();
+		// $content = Cart::content();
+		$total = Cart::subtotal();
+		$data  = ['cart' => $cartItem, 'count' => $count, 'total' => $total];
+		return view('frontend.cart.add_cart')->with($data);
+	}
+
+	public function checkout() {
+		$carts = Cart::content();
+		$total = Cart::subtotal();
+		$data  = ['carts' => $carts, 'total' => $total];
+		return view('frontend.cart.checkout')->with($data);
+	}
+
+	public function update_cart() {
+		$rowId = $_POST['rowId'];
+		$size  = $_POST['size'];
+		$qty   = $_POST['qty'];
+		$item  = Cart::get($rowId);
+		Cart::update($rowId, [
+				'qty'  => $qty,
+				'name' => $size
+			]);
+		$content = Cart::get($rowId);
+		$total   = Cart::subtotal();
+		$data    = ['content' => $content, 'total' => $total];
+		return json_encode($data);
+	}
+
+	public function delete_cart() {
+		$rowId = $_GET['rowId'];
+		Cart::remove($rowId);
+		$count = Cart::content()->count();
+		$total = Cart::subtotal();
+		$data  = [
+			'count' => $count,
+			'total' => $total
+		];
+		return json_encode($data);
+	}
+
+	public function process_to_buy() {
+		$carts = Cart::content();
+		$total = Cart::subtotal();
+		$data  = ['carts' => $carts, 'total' => $total];
+		return view('frontend.cart.process_to_buy')->with($data);
+	}
+
+	public function order() {
+
+	}
+
+}

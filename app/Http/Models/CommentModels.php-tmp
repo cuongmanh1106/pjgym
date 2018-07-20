@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
+class CommentModels extends Model {
+
+	public static function get_comment($pro_id, $skip, $take) {
+		return DB::table('comments')->where('parent', 0)->where('pro_id', $pro_id)->orderBy('created_at', 'DESC')->skip($skip)->take($take)->get();
+	}
+
+	public static function get_comment_all($pro_id) {
+		return DB::table('comments')->where('parent', 0)->where('pro_id', $pro_id)->get();
+	}
+
+	public static function get_comment_by_id($id) {
+		$result = DB::table('comments')->where('id', $id)->get();
+		if (empty($result[0])) {
+			return false;
+		}
+		return $result[0];
+	}
+
+	public static function insert_comment($data) {
+		return DB::table('comments')->insertGetId($data);
+	}
+
+}
