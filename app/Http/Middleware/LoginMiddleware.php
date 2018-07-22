@@ -17,7 +17,7 @@ class LoginMiddleware
     public function handle($request, Closure $next)
     {
         if(Auth::check() && Auth::user()->permission_id !=4){
-            return redirect()->route('admin.users.list');
+            return redirect()->route('admin.chart.list');
         } else {
             Auth::logout();
             return $next($request);

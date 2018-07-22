@@ -104,7 +104,14 @@
                   <td>$ {{ number_format($subtotal, 2)}}</td>
                   <td>$ {{ number_format($subtotal + $c->delivery_cost, 2)}}</td>
                   <td>{{ $status->name }}</td>
-                  <td><a class="btn btn-info" href="{{ route('admin.orders.details',$c->id) }}"><i class="fa fa-edit"></i> View Details</a></td>
+                  <td>
+                    @if(check_permission('edit_order')!=1)
+                    <button disabled="" class="badge badge-info" title="{{get_message()}}"><i class="fa fa-edit"></i> View Details</button>
+                  @else
+                  <a class="badge badge-info" href="{{ route('admin.orders.details',$c->id) }}"><i class="fa fa-edit"></i> View Details</a>
+                  @endif
+                  </td>
+
 
                 </tr>
                 @endforeach

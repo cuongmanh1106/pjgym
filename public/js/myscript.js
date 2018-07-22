@@ -7,7 +7,7 @@ function isNumberKey(evt)
           return false;
        return true;
     }
-
+// call onkeypress="return isNumberKey(event)"
 
 
 function formatNumber(nStr, decSeperate, groupSeperate) {

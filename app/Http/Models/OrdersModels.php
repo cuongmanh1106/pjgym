@@ -44,6 +44,18 @@ class OrdersModels extends Model
 		return DB::table('orders')->where('id',$id)->update($data);
 	}
 
+	public static function insert_ship($data) {
+		return DB::table('ship')->insert($data);
+	}
+
+	public static function list_ship() {
+		return DB::table('ship')->get();
+	}
+
+	public static function update_ship($id,$data) {
+		return DB::table('ship')->where('id',$id)->update($data);
+	}
+
 
 	
 }

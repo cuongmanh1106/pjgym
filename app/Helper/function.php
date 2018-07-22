@@ -1,4 +1,7 @@
 <?php 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
  function stripUnicode($str) {
    if(!$str) return false;
    $unicode = array(
@@ -80,5 +83,17 @@ function newImage($str) {
    $tmp = explode('.', $str);
    $new_img = "$tmp[0]".time()."."."$tmp[1]";
    return $new_img;
+}
+
+function check_permission($controller){
+   $result = DB::table('group_permission')->where('per_id',Auth::user()->permission_id)->first();
+   if($result == null) 
+      return 0;
+   return $result->$controller;
+}
+
+
+function get_message() {
+   return "You don't have permission to do that action";
 }
 

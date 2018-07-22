@@ -13,11 +13,16 @@ use App\Http\Requests\UsersRequests;
 use Hash;
 use App\User;
 use Illuminate\Support\Facades\Auth;
-
+use Session;
 class OrdersController extends Controller
 {
 
+
 	public function index() {
+		if(check_permission('list_order') != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$orders = OrdersModels::get_orders();
 		$customer = UsersModels::get_customer();
 		$status = OrdersModels::get_status();
@@ -60,6 +65,10 @@ class OrdersController extends Controller
 	}
 
 	public function details($id) {
+		if(check_permission('edit_order') != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$details = OrdersModels::get_detail_by_order($id);
 		$order = OrdersModels::get_order_by_id($id);
 		$status = OrdersModels::get_status();
@@ -71,21 +80,21 @@ class OrdersController extends Controller
 		$order = OrdersModels::get_order_by_id($id);
 		$data = array();
 		var_dump($order->status);
-		if($order->status == 1 && $request->status != 5) {
+		if($order->status == 1 && $request->status != 5 && $request->status != 3) { // nếu status cũ là 1 và status vừa chọn khác 5 và 3 
 			$data = [
 				'delivery_place' => $request->delivery_place,
 				'delivery_cost' => $request->delivery_cost,
 				'status' => $request->status
 			];
 			if(OrdersModels::update_order($data,$id)) {
-				$request->session()->flash('alert-success','Success');
+				$request->session()->flash('alert-success','status la 1 ');
 				return redirect()->route('admin.orders.list');
 
 			} else {
 				$request->session()->flash('alert-danger','Fail');
 				return back();
 			}
-		} else if($request->status == 5){
+		} else if($request->status == 5){ //nếu chọn 5 thì phải update quantity bên product
 			$detail = OrdersModels::get_detail_by_order($id);
 			$data = [
 				'status' => $request->status
@@ -98,7 +107,7 @@ class OrdersController extends Controller
 					foreach ($sizes as $key => $value) {
 						if($key == $d->size) {
 							$sizes->$key = $value + $d->quantity;
-							$total = $value + $d->quantity;
+							$total += $value + $d->quantity;
 						} else {
 							$total += $value;
 						}
@@ -109,21 +118,32 @@ class OrdersController extends Controller
 					];
 					ProductsModels::update_product($product->id,$data_product);
 				}
-				$request->session()->flash('alert-success','Success');
+				$request->session()->flash('alert-success','status la 5');
 				return redirect()->route('admin.orders.list');
 
 			} else {
+
 				$request->session()->flash('alert-success','Fail');
 				return back();
 			}
 			
 			
-		} else {
+		} else { //nếu chọn 3 thì phải chọn shipper
+
 			$data = [
 				'status' => $request->status
 			];
 			if(OrdersModels::update_order($data,$id)) {
-				$request->session()->flash('alert-success','Success');
+				/*Giao cho shipper giao hang neu status la delivery*/
+				$shipper = '';
+				if($request->status == 3) {
+					$shipper = $_POST['shipper'];
+					OrdersModels::insert_ship(['user_id'=>$shipper,'order_id'=>$id]);
+				}
+				
+
+
+				$request->session()->flash('alert-success','Status khach 1 va 5');
 				return redirect()->route('admin.orders.list');
 
 			} else {
@@ -133,6 +153,100 @@ class OrdersController extends Controller
 		}
 		
 
+	}
+
+	public function ship() {
+		$ship = array();
+		if(Auth::user()->permission_id == 6) {
+			$ship = DB::table('ship')->where('user_id',Auth::user()->id)->get();
+		} else {
+			$ship = OrdersModels::list_ship();
+		}
+		
+		$data = [
+			'ship'=>$ship
+		];
+
+
+		return view('admin.orders.ship')->with($data);
+	}
+
+	public function search_ship(){
+		$order_id = $_POST['order_id'];
+		$user_id = $_POST['user_id'];
+		$status = $_POST['status'];
+
+		$result = DB::table('ship');
+		$result = $result->where('order_id','like','%'.$order_id.'%');
+		if($user_id != "all"){
+			$result = $result->where('user_id',$user_id);
+		}
+		if($status != "all"){
+			$result = $result->where('status',$status);
+		}
+
+		$ship = $result->get();
+		$data = ['ship'=>$ship];
+		return view('admin.orders.search_ship')->with($data);
+
+		
+	}
+
+	public function update_status() {
+		$id = $_POST['id'];
+		$status = $_POST['status'];
+		$order_id = $_POST['order_id'];
+
+		if($status != 2) {
+			$data = [
+				'status' => $status
+			];
+			if(OrdersModels::update_ship($id,$data)) {
+				if(OrdersModels::update_order(['status'=>4],$order_id)){
+					return 'success';
+				} else {
+					return 'fail';
+				}
+				
+			} else {
+				return 'fail';
+			}
+		} else {
+
+			$order = OrdersModels::get_order_by_id($order_id);
+			$order_detail = OrdersModels::get_detail_by_order($order_id);
+			OrdersModels::update_ship($id,['status'=>2]);
+			if(OrdersModels::update_order(['status'=>5],$order_id)) { // nếu cancel thì update lại product nha nha 
+				foreach($order_detail as $d ){
+					$product = ProductsModels::get_product_by_id($d->pro_id);
+					$sizes = json_decode($product->size);
+					$total = 0;
+					foreach ($sizes as $key => $value) {
+
+						if($key == $d->size) {
+							$sizes->$key = $value + $d->quantity;
+							$total += $value + $d->quantity;
+						} else {
+							$total += $value;
+						}
+						
+
+					}
+					$data_product = [
+						'quantity' => $total,
+						'size' => json_encode($sizes)
+					];
+					ProductsModels::update_product($product->id,$data_product);
+				}
+				return 'success';
+			} else {
+				return 'fail';
+			}
+			
+			
+			
+
+		}
 	}
 
 

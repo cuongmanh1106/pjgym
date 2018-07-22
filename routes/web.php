@@ -50,58 +50,73 @@ Route::group(['prefix'=>'admin'],function(){
 
 	Route::group(['middleware'=>'admin'],function(){
 		Route::group(['prefix'=>'categories'],function(){
-		Route::get('/','admin\CategoriesController@index')->name('admin.categories.list');
-		Route::get('/create','admin\CategoriesController@create')->name('admin.categories.insert');
-		Route::post('/store','admin\Categoriescontroller@store')->name('admin.categories.store');
-		Route::get('/edit/{id}','admin\Categoriescontroller@edit')->name('admin.categories.edit');
-		Route::post('/update/{id}','admin\Categoriescontroller@update')->name('admin.categories.update');
-		Route::get('/update/delete','admin\Categoriescontroller@delete')->name('admin.categories.delete');
-		Route::get('/search','admin\CategoriesController@search')->name('admin.categories.search');
-	});
+			Route::get('/','admin\CategoriesController@index')->name('admin.categories.list');
+			Route::get('/create','admin\CategoriesController@create')->name('admin.categories.insert');
+			Route::post('/store','admin\Categoriescontroller@store')->name('admin.categories.store');
+			Route::get('/edit/{id}','admin\Categoriescontroller@edit')->name('admin.categories.edit');
+			Route::post('/update/{id}','admin\Categoriescontroller@update')->name('admin.categories.update');
+			Route::get('/update/delete','admin\Categoriescontroller@delete')->name('admin.categories.delete');
+			Route::get('/search','admin\CategoriesController@search')->name('admin.categories.search');
+		});
 
 
-	Route::group(['prefix'=>'products'],function(){
-		Route::get('/','admin\ProductsController@index')->name('admin.products.list');
-		Route::get('/create','admin\ProductsController@create')->name('admin.products.create');
-		Route::post('/store','admin\ProductsController@store')->name('admin.products.store');
-		Route::get('/edit/{id}','admin\ProductsController@edit')->name('admin.products.edit');
-		Route::post('/update/{id}','admin\ProductsController@update')->name('admin.products.update');
-		Route::get('/delete','admin\ProductsController@delete')->name('admin.products.delete');
-		Route::get('/search','admin\ProductsController@search')->name('admin.products.search');
-		Route::get('/edit_sub_image','admin\ProductsController@edit_sub_image')->name('admin.products.edit_sub_image');
-		Route::post('update_sub_image','admin\ProductsController@update_sub_image')->name('admin.products.update_sub_image');
-		Route::get('/edit_size','admin\ProductsController@edit_size')->name('admin.products.edit_size');
-		Route::post('/update_size','admin\ProductsController@update_size')->name('admin.products.update_size');
+		Route::group(['prefix'=>'products'],function(){
+			Route::get('/','admin\ProductsController@index')->name('admin.products.list');
+			Route::get('/create','admin\ProductsController@create')->name('admin.products.create');
+			Route::post('/store','admin\ProductsController@store')->name('admin.products.store');
+			Route::get('/edit/{id}','admin\ProductsController@edit')->name('admin.products.edit');
+			Route::post('/update/{id}','admin\ProductsController@update')->name('admin.products.update');
+			Route::get('/delete','admin\ProductsController@delete')->name('admin.products.delete');
+			Route::get('/search','admin\ProductsController@search')->name('admin.products.search');
+			Route::get('/edit_sub_image','admin\ProductsController@edit_sub_image')->name('admin.products.edit_sub_image');
+			Route::post('update_sub_image','admin\ProductsController@update_sub_image')->name('admin.products.update_sub_image');
+			Route::get('/edit_size','admin\ProductsController@edit_size')->name('admin.products.edit_size');
+			Route::post('/update_size','admin\ProductsController@update_size')->name('admin.products.update_size');
 
-	});
+		});
 
-	Route::group(['prefix'=>'users'],function(){
-		Route::get('/index','admin\UsersController@index')->name('admin.users.list');
-		Route::get('/create','admin\UsersController@create')->name('admin.users.create');
-		Route::post('/store','admin\UsersController@store')->name('admin.users.store');
+		Route::group(['prefix'=>'users'],function(){
+			Route::get('/index','admin\UsersController@index')->name('admin.users.list');
+			Route::get('/create','admin\UsersController@create')->name('admin.users.create');
+			Route::post('/store','admin\UsersController@store')->name('admin.users.store');
+			Route::get('/delete','admin\UsersController@delete')->name('admin.users.delete');
+			
+			Route::get('/logout','admin\UsersController@logout')->name('admin.users.logout');
+			Route::get('/profile/{id}','admin\UsersController@profile')->name('admin.users.profile');
+			Route::post('/update_profile','admin\UsersController@update_profile')->name('admin.users.update_profile');
+			Route::post('/change_password','admin\UsersController@change_password')->name('admin.users.change_password');
+			Route::post('/check_password','admin\UsersController@check_password')->name('admin.users.check_password');
+		});
+
+		Route::group(['prefix'=>'permission'],function(){
+			Route::get('/index','admin\PermissionController@index')->name('admin.permission.list');
+			Route::post('/store','admin\PermissionController@store')->name('admin.permission.store');
+			Route::get('/list_group/{id}','admin\PermissionController@list_group')->name('admin.permission.list_group');
+			Route::post('/update_group','admin\PermissionController@update_group')->name('admin.permission.update_group');
+		});
+
+		Route::group(['prefix'=>'comments'],function(){
+			Route::get('/index','admin\CommentsController@index')->name('admin.comments.list');
+		});
+
+		Route::group(['prefix'=>'orders'],function(){
+			Route::get('/index','admin\OrdersController@index')->name('admin.orders.list');
+			Route::post('/search','admin\OrdersController@search')->name('admin.orders.search');
+			Route::get('/details/{id}','admin\OrdersController@details')->name('admin.orders.details');
+			Route::post('/confirm/{id}','admin\OrdersController@confirm')->name('admin.orders.confirm');
+			Route::get('/ship','admin\OrdersController@ship')->name('admin.orders.ship');
+			Route::post('/search_ship','admin\OrdersController@search_ship')->name('admin.orders.search_ship');
+			Route::post('/update_status','admin\OrdersController@update_status')->name('admin.orders.update_status');
+		});	
+		Route::group(['prefix'=>'chart'],function(){
+			Route::get('/index','admin\ChartController@index')->name('admin.chart.list');
+			Route::post('/year','admin\ChartController@year')->name('admin.chart.year');
+			Route::post('/filter','admin\ChartController@filter')->name('admin.chart.filter');
+		});
+
 		
-		Route::get('/logout','admin\UsersController@logout')->name('admin.users.logout');
-		Route::get('/profile/{id}','admin\UsersController@profile')->name('admin.users.profile');
-		Route::post('/update_profile','admin\UsersController@update_profile')->name('admin.users.update_profile');
-		Route::post('/change_password','admin\UsersController@change_password')->name('admin.users.change_password');
-		Route::post('/check_password','admin\UsersController@check_password')->name('admin.users.check_password');
-	});
 
-	Route::group(['prefix'=>'permission'],function(){
-		Route::get('/index','admin\PermissionController@index')->name('admin.permission.list');
-		Route::post('/store','admin\PermissionController@store')->name('admin.permission.store');
-	});
 
-	Route::group(['prefix'=>'comments'],function(){
-		Route::get('/index','admin\CommentsController@index')->name('admin.comments.list');
-	});
-
-	Route::group(['prefix'=>'orders'],function(){
-		Route::get('/index','admin\OrdersController@index')->name('admin.orders.list');
-		Route::post('/search','admin\OrdersController@search')->name('admin.orders.search');
-		Route::get('/details/{id}','admin\OrdersController@details')->name('admin.orders.details');
-		Route::post('/confirm/{id}','admin\OrdersController@confirm')->name('admin.orders.confirm');
-	});	
 	});
 	
 

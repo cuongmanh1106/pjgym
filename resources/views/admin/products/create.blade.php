@@ -123,8 +123,8 @@
             </div>
 
             <div style="text-align: center;">
-                <input class="btn btn-info" name="insert_pro" type="button" id="insert" value="Insert">
-                <input class="btn btn-danger" type="button" value="Cancel">
+                <button class="btn btn-info" name="insert_pro" type="button" id="insert"> <i class="fa fa-thumbs-o-up"></i> Insert</button>
+                <button class="btn btn-danger" onclick="window.location= '{{ route('admin.products.list') }}'" type="button" value="Cancel"><i class="fa fa-reply"></i> Back</button>
             </div>
         </div>
 
@@ -246,7 +246,7 @@
      html += '</ul>';
      console.log(flag);  
      if(flag) {
-        $('input[name="insert_pro"]').attr("type", "submit");
+        $('button[name="insert_pro"]').attr("type", "submit");
     } else {
         $('.error_tmp').html(html);
     }

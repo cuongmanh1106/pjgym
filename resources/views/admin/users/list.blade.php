@@ -2,9 +2,6 @@
 @section('title','List of Categories')
 @section('content')
 @include('admin.include.report')
-
-
-
 <div class="breadcrumbs">
             <div class="col-sm-4">
                 <div class="page-header float-left">
@@ -34,7 +31,11 @@
                     <div class="card">
                         <div class="card-header">
                             <strong class="card-title">Users</strong>
-                            <Button class="btn btn-success" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle"></i> Insert</Button>
+                            @if(check_permission('insert_user') != 1)
+                            <button disabled="" class="btn btn-success"  ><i class="fa fa-plus-circle"></i> Add</button>
+                            @else
+                            <a class="btn btn-success" href="{{ route('admin.users.create') }}" ><i class="fa fa-plus-circle"></i> Add</a>
+                            @endif
                         </div>
                        <div class="search" style="margin-top: 20px">
                            <div class="col-md-3 col-md-offset-3">
@@ -92,7 +93,11 @@
 							      Action
 							    </button>
 							    <div class="dropdown-menu" style="position: absolute;transform: translate3d(0px, 38px, 0px);top: 35px;left: 0px;will-change: transform;">
-							      <a class="dropdown-item badge badge-danger"  id="delete" onclick  href="javascript::void(0)"><i class="fa fa-trash-o"></i> Xóa</a>
+                                    @if(check_permission('delete_user')!=1)
+							      <button class="dropdown-item badge badge-danger" disabled><i class="fa fa-trash-o"></i> Xóa</button>
+                                  @else
+                                  <a class="dropdown-item badge badge-danger" data-index = "{{ $u->id }}"  id="delete_user" onclick  href="javascript::void(0)"><i class="fa fa-trash-o"></i> Xóa</a>
+                                  @endif
 							    </div>
 					  		</div>
 						</div>
@@ -114,26 +119,24 @@
     </div><!-- /#right-panel -->
 <script type="text/javascript">
 
-    function delete_cate(id) {
+   $('#delete_user').on('click',function(){
+    id = $(this).attr('data-index');
+    this1 = $(this);
+    console.log(id);
 
-        if(confirm('Are you are? Data wont backup again')) {
-            $.ajax({
-                url: "{{ route('admin.categories.delete')}}",
-                type: 'GET',
-                cache:false,
-                data:{'id':id},
-                success: function(data,status) {
-                    if(data == "success") {
-                        $('#row-'+id).remove();
-                    } else if(data == "parent_error"){
-                        alert('this cate has sub-cate!!! please delete sub-cate first');
-                    } else {
-                        alert('fail');
-                    }
+    if(confirm("data will not restore again, Are you sure?")){
+        $.ajax({
+            type:'GET',
+            url:'{{route('admin.users.delete')}}',
+            data:{'id':id},
+            success:function(data) {
+                if(data == 'success') {
+                    this1.parent().parent().parent().parent().remove();
                 }
-            })
-        }    
+            }
+        })
     }
+   })
 
     $('select[name=parent_search]').on('change',function(){
         var name = $('input[name=name_search]').val();

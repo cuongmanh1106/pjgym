@@ -36,18 +36,7 @@
                             <strong class="card-title">Permissions</strong>
                             <Button class="btn btn-success" data-toggle="modal" data-target="#insert_per"><i class="fa fa-plus-circle"></i> Insert</Button>
                         </div>
-                       <div class="search" style="margin-top: 20px">
-                           <div class="col-md-3 col-md-offset-3">
-                               <input type="text" class="form-control" name="name_search" placeholder=" Name...">
-                           </div>
-                           <div class="col-md-3 col-md-offset-3">
-                               <select name="parent_search" required="required" id="select" class="form-control">
-                                <option value="all">All</option>
-                                <option value="0">None</option>
-                               
-                              </select>
-                           </div>
-                       </div>
+                       
                         <div class="card-body">
                        
                   <table id="bootstrap-data-table" class="table table-striped table-bordered search_cate">
@@ -71,14 +60,15 @@
                         <td>{{ $p->position }}</td>
                         
                         <td>
-                        	<div class="dropdown">
+                            <a href="{{ route('admin.permission.list_group',$p->id) }}" class="badge badge-info"><i class="fa fa-eye"></i> List permisson</a>
+                        	<!-- <div class="dropdown">
 							    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
 							      Action
 							    </button>
 							    <div class="dropdown-menu" style="position: absolute;transform: translate3d(0px, 38px, 0px);top: 35px;left: 0px;will-change: transform;">
 							      <a class="dropdown-item badge badge-danger"  id="delete" onclick  href="javascript::void(0)"><i class="fa fa-trash-o"></i> Xóa</a>
 							    </div>
-					  		</div>
+					  		</div> -->
 						</div>
 					</td>
                       </tr>

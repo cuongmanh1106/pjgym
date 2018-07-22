@@ -13,11 +13,15 @@ use App\Http\Requests\EditUserRequest;
 use Hash;
 use App\User;
 use Illuminate\Support\Facades\Auth;
-
+use Session;
 class UsersController extends Controller
 {
 
     public function index() {
+        if(check_permission('list_user')!=1){
+            Session::flash('alert-danger',get_message());
+            return back();
+        }
         $users = UsersModels::get_users();
         $data = ['users'=>$users];
         return view('admin.users.list')->with($data);
@@ -25,12 +29,20 @@ class UsersController extends Controller
 
     //register
     public function create() {
+        if(check_permission('insert_user')!=1){
+            Session::flash('alert-danger',get_message());
+            return back();
+        }
         $per = PermissionModels::get_permission();
         $data =['per'=>$per];
         return view('admin.users.create')->with($data);
     }
 
     public function store(UsersRequests $request) {
+        if(check_permission('edit_user')!=1){
+            Session::flash('alert-danger',get_message());
+            return back();
+        }
         $file = '';
         $img_name = '';
         if($request->file('image')!=null) {
@@ -61,6 +73,13 @@ class UsersController extends Controller
         }
     }
 
+    public function delete() {
+        $id = $_GET['id'];
+        if(UsersModels::update_user(['status'=>1],$id)) {
+            return 'success';
+        }
+    }
+
     public function login(Request $request) {
         $login = array(
             'email' => $request->email,
@@ -68,7 +87,7 @@ class UsersController extends Controller
         );
 
         if(Auth::attempt($login) && Auth::user()->permission_id != 4) {
-            return redirect()->route('admin.users.list');
+            return redirect()->route('admin.chart.list');
         } else {
             return back();
         }

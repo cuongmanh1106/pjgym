@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="{{asset('/public/admin/css/themify-icons.css')}}">
     <link rel="stylesheet" href="{{asset('/public/admin/css/flag-icon.min.css')}}">
     <link rel="stylesheet" href="{{asset('/public/admin/css/cs-skin-elastic.css')}}">
+    <link rel="stylesheet" href="{{asset('/public/css/icheck-bootstrap.css')}}">
+    
     <link rel="stylesheet" href="{{asset('/public/admin/css/lib/datatable/dataTables.bootstrap.min.css')}}">
     <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
     <link rel="stylesheet" href="{{asset('/public/admin/scss/style.css')}}">
@@ -30,14 +32,15 @@
 
     <script src="http://demo.itsolutionstuff.com/plugin/jquery.js"></script>
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="{{asset('/public/js/myscript.js')}}"></script>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 
     <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
     <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
     
+    
     <!-- <script type="text/javascript" src="{{asset('/public/js/ckfinder/ckfinder.js')}}"></script> -->
 
 </head>
 <body>
+     @include('admin.categories.modal-insert')

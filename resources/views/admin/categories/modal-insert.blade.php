@@ -16,6 +16,9 @@
               <div class="row form-group">
                 <div class="col col-md-3"><label for="select" class=" form-control-label">Parent</label></div>
                 <div class="col-12 col-md-9">
+                  <?php
+                  $cates = DB::table('categories')->get();
+                  ?>
                   <select name="parent" required="required" id="select" class="form-control">
                     <option value="0">--None--</option>
                    <?php cate_parent($cates); ?>

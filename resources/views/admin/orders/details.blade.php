@@ -74,6 +74,7 @@
                                             @endif
                                             <div class="col-md-4">
                                                 <b>Status: </b>
+                                                @if($order->status < 4 && Auth::user()->permission_id!=6) <!--không cho sửa delivery-->
                                                 <select class="form-control" name="status">
                                                     @foreach($status as $stt)
                                                     <?php
@@ -89,17 +90,25 @@
                                                     <option {{$disabled}} {{$selected}} value="{{ $stt->id }}">{{ $stt->name }}</option>
                                                     @endforeach
                                                 </select>
+                                                @else 
+                                                <?php
+                                                    $stt = DB::table('status')->where('id',$order->status)->first();
+                                                    echo $stt->name;
+                                                ?>
+                                                @endif
                                             </div>
                                         </div>
                                         <br>
                                         <div class="row" style="text-align: right">
                                             <a href="{{ route('admin.orders.list') }}" class="btn btn-danger"><i class="fa fa-reply"></i> Back</a>
-                                            @if($order->status != 5)
-                                            <button type="button" name="confirm" class="btn btn-info"><i class="fa fa-thumbs-up"></i> Confirm</button>
+                                            @if($order->status <4)
+                                            <Button type="submit" name="confirm" class="btn btn-info"><i class="fa fa-thumbs-up"></i> Confirm</button>
                                             @else 
                                             <button disabled type="button" name="confirm" class="btn btn-info"><i class="fa fa-thumbs-up"></i> Confirm</button>
                                             @endif
+                                            <Button type="button" class="btn btn-info hidden" name="delivery" data-toggle="modal" data-target="#delivery"><i class="fa fa-thumbs-up"></i> Confirm</Button>
                                             </div>
+                                            
                                         </form>
                                     </div>
                                 </div>
@@ -168,15 +177,33 @@
 
 
 <script type="text/javascript">
-    $('button[name=confirm]').on('click',function(){
-        status = $('select[name=status]').val();
-        if(parseInt(status) != 3) {
-            $('button[name=confirm]').attr('type','submit');
-        } else {
-            $('#delivery').modal(); 
 
+    $('button[name=delivery]').hide();
+    $('select[name=status]').on('change',function(){
+        status = $('select[name=status]').val();
+        
+        if(parseInt(status) == 3) {
+            
+            $('button[name=confirm]').hide();
+            $('button[name=delivery]').show();
+        } else {
+            $('button[name=confirm]').show();
+            $('button[name=delivery]').hide();
         }
     }) 
+
+    
+</script>
+<script type="text/javascript">
+    $('#delivery').on('show.bs.modal', function(e) {
+        delivery_place = $('input[name=delivery_place]').val();
+        delivery_cost = $('input[name=delivery_cost]').val();
+        console.log(delivery_place);
+        console.log(delivery_cost);
+        $(e.currentTarget).find('input[name="delivery_place"]').val(delivery_place);
+        $(e.currentTarget).find('input[name="delivery_cost"]').val(delivery_cost);
+       
+    })
 </script>
 
 

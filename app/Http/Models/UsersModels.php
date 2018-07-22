@@ -8,7 +8,7 @@ class UsersModels extends Model
 {
 
 	public static function get_users() {
-		return DB::table('users')->where('status','0')->orderBy('id','DESC')->get();
+		return DB::table('users')->where('status','0')->where('permission_id','!=',4)->orderBy('id','DESC')->get();
 	}
 
 	public static function get_customer() {

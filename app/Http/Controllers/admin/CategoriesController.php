@@ -4,11 +4,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Models\CategoriesModels;
+use App\Http\Models\PermissionModels;
 use App\Http\Requests\CategoriesRequest;
+use Illuminate\Support\Facades\Auth;
+use Session;
 class CategoriesController extends Controller
 {
 
-	public function index() {
+	public function index(Request $request) {
+		if(check_permission("list_category") != 1) {
+			$request->session()->flash('alert-danger',get_message());
+			return back();
+		}
 		$cates = CategoriesModels::get_cates();
 		$data = ['cates'=>$cates];
 		return view('admin.categories.list')->with($data);
@@ -28,11 +35,20 @@ class CategoriesController extends Controller
 	}
 
 	public function create() {
+		if(check_permission("insert_category") != 1) {
+			$request->session()->flash('alert-danger',get_message());
+			return back();
+		}
+
 
 		return view('admin.categories.create');
 	}
 
 	public function store(Request $request) {
+		if(check_permission("insert_category") != 1) {
+			$request->session()->flash('alert-danger',get_message());
+			return back();
+		}
 		$data = [
 			'name' => $request->name,
 			'alias' => changeTitle($request->name),
@@ -54,6 +70,10 @@ class CategoriesController extends Controller
 
 
 	public function edit($id) {
+		if(check_permission("edit_category") != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		
 		$cate = CategoriesModels::get_cates_by_id($id);
 		$cates = CategoriesModels::get_cates();
@@ -62,6 +82,10 @@ class CategoriesController extends Controller
 	}
 
 	public function update($id, CategoriesRequest $request) {
+		if(check_permission("edit_category") != 1) {
+			$request->session()->flash('alert-danger',get_message());
+			return back();
+		}
 		$cate = CategoriesModels::get_cates_by_id($id);
 
 		$data = [
@@ -84,6 +108,10 @@ class CategoriesController extends Controller
 	}
 
 	public function delete(Request $request) {
+		if(check_permission("delete_category") != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$id = $_GET['id'];
 		$parent = CategoriesModels::get_cates_by_parentid($id);
 		if(count($parent) == 0 && CategoriesModels::delete_cate($id)) {

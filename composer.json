@@ -6,12 +6,12 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
+        "consoletvs/charts": "5.*",
+        "gloudemans/shoppingcart": "~2.3",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4",
-        "yajra/laravel-datatables-oracle": "^7.10",
-        "gloudemans/shoppingcart": "~2.3"
-
+        "yajra/laravel-datatables-oracle": "^7.10"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

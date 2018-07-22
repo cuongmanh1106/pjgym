@@ -85,10 +85,7 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-    count = $('button[name=process]').attr('data-index');
-    if(parseInt(count) == 0) { //nếu không có sp trong giỏ thì disabled nút process to buy
-      $('button[name=process]').addClass('disabled');
-    }
+    
   })
 
   $(document).on('click','button[name=process]',function(){

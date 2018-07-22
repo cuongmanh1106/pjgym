@@ -7,11 +7,16 @@ use App\Http\Models\CategoriesModels;
 use App\Http\Models\ProductsModels;
 use App\Http\Requests\CategoriesRequest;
 use App\Http\Requests\ProductsRequest;
+use Session;
 class ProductsController extends Controller
 {
 
 
 	public function index() {
+		if(check_permission('list_product') != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$products = ProductsModels::get_products();
 		$cates = CategoriesModels::get_cates();
 
@@ -50,12 +55,20 @@ class ProductsController extends Controller
 	}
 
 	public function create(){
+		if(check_permission('insert_product') != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$cate = CategoriesModels::get_cates();
 		$data =['cates'=>$cate];
 		return view('admin.products.create')->with($data);
 	}
 
 	public function store(ProductsRequest $request){
+		if(check_permission('insert_product') != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$file = $request->file('image');
 		$img_name = $file->getClientOriginalName();
 		$img_name = newImage($img_name);
@@ -126,7 +139,10 @@ class ProductsController extends Controller
 	}
 
 	public function edit($id) {
-
+		if(check_permission('edit_product') != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$product = ProductsModels::get_product_by_id($id);
 		$cates = CategoriesModels::get_cates();
 		$data =[
@@ -138,7 +154,10 @@ class ProductsController extends Controller
 	}
 
 	public function update(Request $request, $id) {
-
+		if(check_permission('edit_product') != 1) {
+			Session::flash('alert-danger',get_message());
+			return back();
+		}
 		$new_sub_image = $request->old_sub_image;
 		$delete_sub_image = [];
 		$product = ProductsModels::get_product_by_id($id);
@@ -248,8 +267,10 @@ class ProductsController extends Controller
 	}
 
 	public function delete() {
-
-		$query = "SELECT * FROM nhanvien WHERE TENDANGNHAP =".$tendangnhap." AND MATKHAU = ".$matkhau;
+		if(check_permission('delete_product') != 1) {
+			Session::flash('alert-danger',get_message());
+			return 'permission_error';
+		}
 		$id = $_GET['id'];
 
 		if(ProductsModels::delete_product($id)) {
@@ -260,6 +281,9 @@ class ProductsController extends Controller
 	}
 
 	public function edit_sub_image() {
+		if(check_permission('edit_product') != 1) {
+			return 'permission_error';
+		}
 		$id = $_GET['id'];
 		$pro = ProductsModels::get_product_by_id($id);
 		$sub_image = $pro->sub_image;
@@ -267,8 +291,10 @@ class ProductsController extends Controller
 	}
 
 	public function update_sub_image(Request $request) {
+		if(check_permission('edit_product') != 1) {
+			return 'permission_error';
+		}
 		$id = $_POST['id_pro'];
-		var_dump($id);
 		$new_sub_image = $request->old_sub_image; // sub_image in database
 		$delete_sub_image = []; //contain sub_images are deleted by user
 		$product = ProductsModels::get_product_by_id($id);
@@ -281,9 +307,6 @@ class ProductsController extends Controller
 			$delete_sub_image = array_diff($old_sub_image, $new_sub_image); //Những Phần tử Khác nhau giữa 2 array
 			$new_sub_image = array_intersect($old_sub_image, $new_sub_image);
 		}
-		
-
-		
 
 		if($request->file('sub_image') != null){ //Thêm hình
 			 //convert thành array
@@ -310,7 +333,7 @@ class ProductsController extends Controller
 						unlink(public_path('admin/images/'.$value));
 				}
 			}
-			$request->session()->flash('alert-success','Thêm hình');
+			$request->session()->flash('alert-success','Success');
 			return back();
 			/*chỉ xóa hình không có thêm hình*/
 		} else if ($request->file('file_image') == null && count($delete_sub_image)!=0) { //Xóa hình mà k thêm
@@ -324,7 +347,7 @@ class ProductsController extends Controller
 				}
 			}
 			
-			$request->session()->flash('alert-success','Xóa hình mà k thêm');
+			$request->session()->flash('alert-success','Success');
 			return back();
 		} else if($new_sub_image == null) { //Xóa hết hình
 			$data_update = [
@@ -337,7 +360,7 @@ class ProductsController extends Controller
 				}
 			}
 			
-			$request->session()->flash('alert-success','Xóa hết hình');
+			$request->session()->flash('alert-success','Success');
 			return back();
 		}
 
@@ -345,6 +368,9 @@ class ProductsController extends Controller
 	}
 
 	public function edit_size() {
+		if(check_permission('edit_product') != 1) {
+			return 'permission_error';
+		}
 		$id = $_GET['id'];
 		$pro = ProductsModels::get_product_by_id($id);
 		$size = $pro->size;
@@ -352,6 +378,9 @@ class ProductsController extends Controller
 	}
 
 	public function update_size(Request $request) {
+		if(check_permission('edit_product') != 1) {
+			return 'permission_error';
+		}
 		$id = $_POST['id_pro'];
 
 		$total_quantity = 0;
